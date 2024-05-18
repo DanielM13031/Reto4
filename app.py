@@ -37,7 +37,7 @@ def update_db(data):
 
 # Diseño de la aplicación
 app.layout = html.Div([
-    html.H1("Tabla de la Base de Datos"),
+    html.H1("Bienvenido a tu inventario :D"),
     dash_table.DataTable(
         id='table',
         columns=[{"name": i, "id": i, "editable": True} for i in load_data().columns],
