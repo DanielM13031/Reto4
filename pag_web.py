@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, text
 import pandas as pd
 
 # Conexión a la base de datos PostgreSQL utilizando SQLAlchemy
-engine = create_engine('postgresql://postgres:ZMxDZYveDvQkwTACHedhGeBfLPoGhFWl@monorail.proxy.rlwy.net:19127/railway')
+engine = create_engine('postgresql://postgres:htYZzYoTPdNSLhnIdCcaJsdWqauDmNTF@viaduct.proxy.rlwy.net:42002/railway')
 
 # Consulta SQL para obtener los datos de la tabla
 query = "SELECT * FROM inventario"
