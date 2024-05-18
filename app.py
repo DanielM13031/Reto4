@@ -15,6 +15,10 @@ df = pd.read_sql(query, engine)
 
 # Crear la aplicación Dash
 app = dash.Dash(__name__)
+server = app.server  # Exponer la instancia de Flask subyacente
+
+# Crear la aplicación Dash
+app = dash.Dash(__name__)
 
 # Diseño de la aplicación
 app.layout = html.Div([
