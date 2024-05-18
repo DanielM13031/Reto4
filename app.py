@@ -4,33 +4,17 @@ from dash.dependencies import Input, Output, State
 from sqlalchemy import create_engine, text
 import pandas as pd
 
-# Conexión a la base de datos PostgreSQL utilizando SQLAlchemy
-engine = create_engine('postgresql://postgres:htYZzYoTPdNSLhnIdCcaJsdWqauDmNTF@viaduct.proxy.rlwy.net:42002/railway')
-
-# Consulta SQL para obtener los datos de la tabla
-query = "SELECT * FROM inventario"
-
-# Obtener datos de la tabla utilizando pandas y SQLAlchemy
-df = pd.read_sql(query, engine)
-
 # Crear la aplicación Dash
 app = dash.Dash(__name__)
-server = app.server  # Exponer la instancia de Flask subyacente
 
-# Diseño de la aplicación
-app.layout = html.Div([
-    html.H1("Tabla de la Base de Datos"),
-    dash_table.DataTable(
-        id='table',
-        columns=[{"name": i, "id": i, "editable": True} for i in df.columns],
-        data=df.to_dict('records'),
-        editable=True,
-        row_deletable=True,
-        row_selectable='multi'
-    ),
-    html.Button('Guardar Cambios', id='save-button', n_clicks=0),
-    html.Div(id='output')
-])
+# Conexión a la base de datos PostgreSQL utilizando SQLAlchemy
+engine = create_engine('postgresql://postgres:13031@localhost/DB_Reto4')
+
+# Función para cargar los datos desde la base de datos
+def load_data():
+    query = "SELECT * FROM inventario"
+    df = pd.read_sql(query, engine)
+    return df
 
 # Función para actualizar la base de datos
 def update_db(data):
@@ -50,6 +34,34 @@ def update_db(data):
         print(f"Error al actualizar la base de datos: {e}")
     finally:
         conn.close()
+
+# Diseño de la aplicación
+app.layout = html.Div([
+    html.H1("Tabla de la Base de Datos"),
+    dash_table.DataTable(
+        id='table',
+        columns=[{"name": i, "id": i, "editable": True} for i in load_data().columns],
+        data=load_data().to_dict('records'),
+        editable=True,
+        row_deletable=True,
+        row_selectable='multi'
+    ),
+    html.Button('Guardar Cambios', id='save-button', n_clicks=0),
+    html.Div(id='output'),
+    dcc.Interval(
+        id='interval-component',
+        interval=60000,  # en milisegundos
+        n_intervals=0
+    )
+])
+
+# Callback para cargar los datos cada vez que el intervalo de actualización se dispara
+@app.callback(
+    Output('table', 'data'),
+    Input('interval-component', 'n_intervals')
+)
+def update_table_data(n_intervals):
+    return load_data().to_dict('records')
 
 # Callback para guardar los cambios en la base de datos
 @app.callback(
