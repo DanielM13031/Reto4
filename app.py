@@ -8,7 +8,7 @@ import pandas as pd
 app = dash.Dash(__name__)
 
 # Conexión a la base de datos PostgreSQL en Azure utilizando SQLAlchemy
-engine = create_engine('postgresql://DanielM:Promaster13031@quierollorar.postgres.database.azure.com:5605/DBfoundation')
+engine = create_engine('postgresql://DanielM:Promaster13031@quierollorar.postgres.database.azure.com:5432/DBfoundation')
 
 # Función para cargar los datos desde la base de datos
 def load_data():
