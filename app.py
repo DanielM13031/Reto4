@@ -77,3 +77,5 @@ def save_changes(n_clicks, rows):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+server = app.server
