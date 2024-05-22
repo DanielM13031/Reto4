@@ -1,5 +1,4 @@
 dash
 pandas
 SQLAlchemy
-gunicorn
 psycopg2-binary
