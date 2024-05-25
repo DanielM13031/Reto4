@@ -13,27 +13,26 @@ engine = create_engine('postgresql://DanielM:Promaster13031@quierollorar.postgre
 # Función para cargar los datos desde la base de datos
 def load_data():
     query = "SELECT * FROM inventario"
-    df = pd.read_sql(query, engine)
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
     return df
 
 # Función para actualizar la base de datos
 def update_db(data):
-    conn = engine.connect()
-    trans = conn.begin()  # Iniciar una transacción
-    try:
-        for row in data:
-            sql = text("""
-            UPDATE inventario
-            SET nombre = :nombre, cantidad = :cantidad
-            WHERE cajon = :cajon
-            """)
-            conn.execute(sql, {'nombre': row['nombre'], 'cantidad': row['cantidad'], 'cajon': row['cajon']})
-        trans.commit()  # Confirmar la transacción
-    except Exception as e:
-        trans.rollback()  # Revertir la transacción en caso de error
-        print(f"Error al actualizar la base de datos: {e}")
-    finally:
-        conn.close()
+    with engine.connect() as conn:
+        trans = conn.begin()  # Iniciar una transacción
+        try:
+            for row in data:
+                sql = text("""
+                UPDATE inventario
+                SET nombre = :nombre, cantidad = :cantidad
+                WHERE cajon = :cajon
+                """)
+                conn.execute(sql, {'nombre': row['nombre'], 'cantidad': row['cantidad'], 'cajon': row['cajon']})
+            trans.commit()  # Confirmar la transacción
+        except Exception as e:
+            trans.rollback()  # Revertir la transacción en caso de error
+            print(f"Error al actualizar la base de datos: {e}")
 
 # Diseño de la aplicación
 app.layout = html.Div([
@@ -75,6 +74,5 @@ def save_changes(n_clicks, rows):
         return 'Datos actualizados en la base de datos'
     return ''
 
-
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8050)  # Aquí puedes especificar el puerto
